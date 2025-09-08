@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Form — Name, Email (required) & Age</title>
+</head>
+<body>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      document.body.style.fontFamily = "Segoe UI, Roboto, Arial, sans-serif";
+      document.body.style.display = 'flex';
+      document.body.style.justifyContent = 'center';
+      document.body.style.alignItems = 'flex-start';
+      document.body.style.minHeight = '100vh';
+      document.body.style.background = 'linear-gradient(180deg, #fafafa, #f0f6ff)';
+      document.body.style.margin = '0';
+      document.body.style.padding = '40px';
+
+      const card = document.createElement('div');
+      card.setAttribute('id', 'card');
+      card.style.width = '420px';
+      card.style.padding = '22px';
+      card.style.borderRadius = '12px';
+      card.style.boxShadow = '0 8px 24px rgba(20,30,60,0.08)';
+      card.style.background = '#ffffff';
+      card.style.border = '1px solid rgba(20,30,60,0.04)';
+
+      const heading = document.createElement('h1');
+      heading.textContent = 'Sign-up Form';
+      heading.style.margin = '0 0 14px 0';
+      heading.style.fontSize = '20px';
+      heading.style.letterSpacing = '0.2px';
+      heading.style.color = '#0b3b66';
+
+      const desc = document.createElement('p');
+      desc.textContent = 'Please enter your details. Email is mandatory.';
+      desc.style.margin = '0 0 18px 0';
+      desc.style.fontSize = '13px';
+      desc.style.color = '#405a78';
+
+      const form = document.createElement('form');
+      form.setAttribute('id', 'userForm');
+      form.setAttribute('novalidate', '');
+      form.style.display = 'grid';
+      form.style.gap = '12px';
+
+      function createField(labelText, inputType, inputName, isRequired = false, placeholder = '') {
+        const wrapper = document.createElement('div');
+        wrapper.style.display = 'flex';
+        wrapper.style.flexDirection = 'column';
+
+        const label = document.createElement('label');
+        label.setAttribute('for', inputName);
+        label.textContent = labelText;
+        label.style.marginBottom = '6px';
+
+        const input = document.createElement('input');
+        input.setAttribute('type', inputType);
+        input.setAttribute('name', inputName);
+        input.setAttribute('id', inputName);
+        input.setAttribute('placeholder', placeholder);
+        input.style.padding = '10px 12px';
+        input.style.borderRadius = '8px';
+        input.style.border = '1px solid rgba(30,50,80,0.12)';
+        input.style.outline = 'none';
+        input.style.fontSize = '14px';
+
+        input.addEventListener('focus', () => input.style.boxShadow = '0 0 0 4px rgba(11,59,102,0.06)');
+        input.addEventListener('blur', () => input.style.boxShadow = 'none');
+
+        if (isRequired) input.required = true;
+
+        wrapper.appendChild(label);
+        wrapper.appendChild(input);
+
+        return { wrapper, label, input };
+      }
+
+      // Name field
+      const nameField = createField('Name', 'text', 'name', false, 'Your Name');
+      // Email (mandatory)
+      const emailField = createField('Email (required)', 'email', 'email', true, 'you@example.com');
+      // Age (optional)
+      const ageField = createField('Age', 'number', 'age', false, '18');
+      ageField.input.setAttribute('min', '0');
+
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.textContent = 'Submit';
+      btn.style.padding = '10px 14px';
+      btn.style.border = 'none';
+      btn.style.borderRadius = '8px';
+      btn.style.cursor = 'pointer';
+      btn.style.fontWeight = '600';
+      btn.style.fontSize = '14px';
+      btn.style.background = '#0b76ff';
+      btn.style.color = '#fff';
+      btn.style.alignSelf = 'start';
+
+      const msg = document.createElement('div');
+      msg.setAttribute('aria-live', 'polite');
+      msg.style.minHeight = '20px';
+      msg.style.fontSize = '13px';
+      msg.style.marginTop = '6px';
+
+      form.appendChild(nameField.wrapper);
+      form.appendChild(emailField.wrapper);
+      form.appendChild(ageField.wrapper);
+      form.appendChild(btn);
+      form.appendChild(msg);
+
+      card.appendChild(heading);
+      card.appendChild(desc);
+      card.appendChild(form);
+
+      document.body.appendChild(card);
+
+      function boldAllLabels() {
+        const labels = card.querySelectorAll('label');
+        labels.forEach(l => l.style.fontWeight = '700');
+      }
+
+      function styleHeadingAndForm(highlight = false) {
+        heading.style.transition = 'all 240ms ease';
+        if (highlight) {
+          heading.style.background = 'linear-gradient(90deg,#e8f2ff,#ffffff)';
+          heading.style.padding = '10px 12px';
+          heading.style.borderRadius = '8px';
+          heading.style.boxShadow = '0 6px 18px rgba(11,59,102,0.06)';
+          card.style.border = '1px solid rgba(11,118,255,0.26)';
+          card.style.boxShadow = '0 12px 36px rgba(11,76,153,0.08)';
+        } else {
+          heading.style.background = 'transparent';
+          heading.style.padding = '0';
+          heading.style.boxShadow = 'none';
+          card.style.border = '1px solid rgba(20,30,60,0.04)';
+          card.style.boxShadow = '0 8px 24px rgba(20,30,60,0.08)';
+        }
+      }
+
+      boldAllLabels();
+      styleHeadingAndForm(false);
+
+      btn.addEventListener('click', () => {
+        const requiredInputs = form.querySelectorAll('[required]');
+        let anyEmpty = false;
+        msg.textContent = '';
+
+        requiredInputs.forEach(inp => {
+          inp.style.background = '';
+          inp.style.border = '1px solid rgba(30,50,80,0.12)';
+        });
+
+        requiredInputs.forEach(inp => {
+          if (!inp.value || !inp.checkValidity()) {
+            anyEmpty = true;
+            inp.style.border = '2px solid #e23';
+            inp.style.background = 'rgba(255,235,235,0.9)';
+          }
+        });
+
+        styleHeadingAndForm(anyEmpty);
+
+        if (anyEmpty) {
+          msg.style.color = '#b00020';
+          msg.textContent = 'Please fill in the required fields correctly.';
+          const first = form.querySelector(':invalid') || form.querySelector('[required]:not([value])');
+          if (first) first.focus();
+          return;
+        }
+
+        msg.style.color = '#086f29';
+        msg.textContent = 'Form looks good — (demo).';
+
+        const data = {
+          name: form.name.value.trim(),
+          email: form.email.value.trim(),
+          age: form.age.value ? Number(form.age.value) : null
+        };
+        console.log('Form submit (demo):', data);
+
+        card.style.border = '1px solid rgba(8,111,41,0.18)';
+        setTimeout(() => styleHeadingAndForm(false), 900);
+      });
+    });
+  </script>
+</body>
+</html>
